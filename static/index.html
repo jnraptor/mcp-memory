@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Remote MCP Memory Server</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body class="bg-white text-gray-800 font-sans leading-relaxed max-w-4xl mx-auto p-6">
+    <header class="flex justify-between items-center mb-8 py-4">
+      <div class="text-2xl font-bold text-black">mcp-memory</div>
+      <div class="flex items-center space-x-4">
+        <a
+          href="https://github.com/puliczek/mcp-memory"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center space-x-2 px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors duration-200"
+          aria-label="Star mcp-memory on GitHub"
+        >
+          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+            <path
+              fill-rule="evenodd"
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+            ></path>
+          </svg>
+          <span>Star on GitHub</span>
+        </a>
+        <a
+          href="https://x.com/pulik_io"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center space-x-2 px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors duration-200"
+          aria-label="Follow pulik_io on X"
+        >
+          <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 16 16">
+            <path
+              d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"
+            />
+          </svg>
+          <span>Created by @pulik_io</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="space-y-10">
+      <div
+        class="fixed inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]"
+      ></div>
+      <section class="text-center">
+        <h1 class="text-5xl font-bold text-black mb-3">Your Personal Long-Term Memory</h1>
+        <p class="text-lg text-gray-700 mb-5 max-w-xl mx-auto text-balance">
+          Is AI forgetting who you are, your context, or preferences? Use mcp-memory for the same memory layer across
+          Cursor, Claude, Copilot, and other MCP clients. Works with any LLM like OpenAI, Gemini, or Anthropic.
+        </p>
+        <div class="flex flex-wrap justify-center gap-3 mb-8">
+          <span
+            class="inline-block bg-gray-100 rounded-full px-4 py-1.5 text-sm font-semibold text-gray-700 border border-gray-300"
+            >100% Open Source</span
+          >
+          <span
+            class="inline-block bg-gray-100 rounded-full px-4 py-1.5 text-sm font-semibold text-gray-700 border border-gray-300"
+            >Self-Hostable on Cloudflare</span
+          >
+          <span
+            class="inline-block bg-gray-100 rounded-full px-4 py-1.5 text-sm font-semibold text-gray-700 border border-gray-300"
+            >Uses Semantic Search (RAG)</span
+          >
+        </div>
+      </section>
+
+      <section class="bg-gray-50 p-6 rounded-lg shadow-md border border-gray-200">
+        <label for="sse-url" class="block text-sm font-medium text-gray-700 mb-1">Your Personal MCP Server URL:</label>
+        <div class="flex items-center space-x-3">
+          <input
+            type="text"
+            name="sse-url"
+            id="sse-url"
+            class="flex-grow block w-full rounded-md border-gray-300 bg-white py-3 px-4 text-gray-900 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-500 focus:ring-opacity-50 text-lg"
+            readonly
+            placeholder="Generating URL..."
+          />
+          <button
+            id="copy-button"
+            type="button"
+            class="inline-flex items-center rounded-md border border-transparent bg-orange-600 px-4 py-4 text-sm font-medium leading-4 text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            title="Copy URL"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+              />
+            </svg>
+            Copy
+          </button>
+        </div>
+        <p class="mt-2 text-sm text-gray-500">
+          Your unique ID is stored locally in your browser. Save it somewhere safe. Works with any MCP Client.
+        </p>
+
+        <!-- Tabs Start -->
+        <div class="mt-4" id="config-tabs-container">
+          <!-- Tab Navigation -->
+          <div class="border-b border-gray-200">
+            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+              <button
+                data-tab-target="#cursor-tab"
+                class="tab-button active-tab group inline-flex items-center py-3 px-1 border-b-2 font-semibold text-sm border-orange-500 text-orange-600"
+                aria-current="page"
+              >
+                <svg
+                  height="1.2em"
+                  style="flex: none; line-height: 1"
+                  viewBox="0 0 24 24"
+                  width="1.2em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <title>Cursor</title>
+                  <path
+                    d="M11.925 24l10.425-6-10.425-6L1.5 18l10.425 6z"
+                    fill="url(#lobe-icons-cursorundefined-fill-0)"
+                  ></path>
+                  <path d="M22.35 18V6L11.925 0v12l10.425 6z" fill="url(#lobe-icons-cursorundefined-fill-1)"></path>
+                  <path d="M11.925 0L1.5 6v12l10.425-6V0z" fill="url(#lobe-icons-cursorundefined-fill-2)"></path>
+                  <path d="M22.35 6L11.925 24V12L22.35 6z" fill="#555"></path>
+                  <path d="M22.35 6l-10.425 6L1.5 6h20.85z" fill="#000"></path>
+                  <defs>
+                    <linearGradient
+                      gradientUnits="userSpaceOnUse"
+                      id="lobe-icons-cursorundefined-fill-0"
+                      x1="11.925"
+                      x2="11.925"
+                      y1="12"
+                      y2="24"
+                    >
+                      <stop offset=".16" stop-color="#000" stop-opacity=".39"></stop>
+                      <stop offset=".658" stop-color="#000" stop-opacity=".8"></stop>
+                    </linearGradient>
+                    <linearGradient
+                      gradientUnits="userSpaceOnUse"
+                      id="lobe-icons-cursorundefined-fill-1"
+                      x1="22.35"
+                      x2="11.925"
+                      y1="6.037"
+                      y2="12.15"
+                    >
+                      <stop offset=".182" stop-color="#000" stop-opacity=".31"></stop>
+                      <stop offset=".715" stop-color="#000" stop-opacity="0"></stop>
+                    </linearGradient>
+                    <linearGradient
+                      gradientUnits="userSpaceOnUse"
+                      id="lobe-icons-cursorundefined-fill-2"
+                      x1="11.925"
+                      x2="1.5"
+                      y1="0"
+                      y2="18"
+                    >
+                      <stop stop-color="#000" stop-opacity=".6"></stop>
+                      <stop offset=".667" stop-color="#000" stop-opacity=".22"></stop>
+                    </linearGradient>
+                  </defs>
+                </svg>
+
+                <span class="ml-1">Cursor</span>
+              </button>
+              <button
+                data-tab-target="#claude-tab"
+                class="tab-button group inline-flex items-center py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              >
+                <svg
+                  height="1.2em"
+                  style="flex: none; line-height: 1"
+                  viewBox="0 0 24 24"
+                  width="1.2em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <title>Claude</title>
+                  <path
+                    d="M4.709 15.955l4.72-2.647.08-.23-.08-.128H9.2l-.79-.048-2.698-.073-2.339-.097-2.266-.122-.571-.121L0 11.784l.055-.352.48-.321.686.06 1.52.103 2.278.158 1.652.097 2.449.255h.389l.055-.157-.134-.098-.103-.097-2.358-1.596-2.552-1.688-1.336-.972-.724-.491-.364-.462-.158-1.008.656-.722.881.06.225.061.893.686 1.908 1.476 2.491 1.833.365.304.145-.103.019-.073-.164-.274-1.355-2.446-1.446-2.49-.644-1.032-.17-.619a2.97 2.97 0 01-.104-.729L6.283.134 6.696 0l.996.134.42.364.62 1.414 1.002 2.229 1.555 3.03.456.898.243.832.091.255h.158V9.01l.128-1.706.237-2.095.23-2.695.08-.76.376-.91.747-.492.584.28.48.685-.067.444-.286 1.851-.559 2.903-.364 1.942h.212l.243-.242.985-1.306 1.652-2.064.73-.82.85-.904.547-.431h1.033l.76 1.129-.34 1.166-1.064 1.347-.881 1.142-1.264 1.7-.79 1.36.073.11.188-.02 2.856-.606 1.543-.28 1.841-.315.833.388.091.395-.328.807-1.969.486-2.309.462-3.439.813-.042.03.049.061 1.549.146.662.036h1.622l3.02.225.79.522.474.638-.079.485-1.215.62-1.64-.389-3.829-.91-1.312-.329h-.182v.11l1.093 1.068 2.006 1.81 2.509 2.33.127.578-.322.455-.34-.049-2.205-1.657-.851-.747-1.926-1.62h-.128v.17l.444.649 2.345 3.521.122 1.08-.17.353-.608.213-.668-.122-1.374-1.925-1.415-2.167-1.143-1.943-.14.08-.674 7.254-.316.37-.729.28-.607-.461-.322-.747.322-1.476.389-1.924.315-1.53.286-1.9.17-.632-.012-.042-.14.018-1.434 1.967-2.18 2.945-1.726 1.845-.414.164-.717-.37.067-.662.401-.589 2.388-3.036 1.44-1.882.93-1.086-.006-.158h-.055L4.132 18.56l-1.13.146-.487-.456.061-.746.231-.243 1.908-1.312-.006.006z"
+                    fill="#D97757"
+                    fill-rule="nonzero"
+                  ></path>
+                </svg>
+                <span class="ml-1">Claude</span>
+              </button>
+              <button
+                data-tab-target="#windsurf-tab"
+                class="tab-button group inline-flex items-center py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              >
+                <svg height="1.2em" width="1.2em" viewBox="0 0 166 263" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <g filter="url(#filter0_i_15473_4390)">
+                    <path
+                      d="M42.0858 128.474L28.4271 90.0885C26.0444 83.3926 30.863 76.2871 37.7183 76.6086C114.255 80.1979 153.522 108.143 149.862 188.729C136.551 132.449 72.7094 128.474 42.0858 128.474Z"
+                      fill="#58E5BB"
+                    />
+                  </g>
+                  <g filter="url(#filter1_i_15473_4390)">
+                    <path
+                      d="M21.4532 57.8327L7.23553 20.6391C4.66234 13.9076 9.47768 6.59913 16.4397 6.68271C94.603 7.6211 149.178 12.9261 149.178 117.405C135.867 61.1251 52.0767 57.8327 21.4532 57.8327Z"
+                      fill="#58E5BB"
+                    />
+                  </g>
+                  <g filter="url(#filter2_i_15473_4390)">
+                    <path
+                      d="M63.2445 201.377L48.5918 160.302C46.2158 153.641 50.9684 146.551 57.7876 146.914C120.232 150.241 151.465 177.501 147.848 257.153C134.537 200.873 94.0886 201.377 63.2445 201.377Z"
+                      fill="#58E5BB"
+                    />
+                  </g>
+                  <defs>
+                    <filter
+                      id="filter0_i_15473_4390"
+                      x="27.8101"
+                      y="76.5977"
+                      width="122.286"
+                      height="116.131"
+                      filterUnits="userSpaceOnUse"
+                      color-interpolation-filters="sRGB"
+                    >
+                      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+                      <feColorMatrix
+                        in="SourceAlpha"
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                        result="hardAlpha"
+                      />
+                      <feOffset dy="4" />
+                      <feGaussianBlur stdDeviation="2" />
+                      <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
+                      <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+                      <feBlend mode="normal" in2="shape" result="effect1_innerShadow_15473_4390" />
+                    </filter>
+                    <filter
+                      id="filter1_i_15473_4390"
+                      x="6.53281"
+                      y="6.68164"
+                      width="142.645"
+                      height="114.724"
+                      filterUnits="userSpaceOnUse"
+                      color-interpolation-filters="sRGB"
+                    >
+                      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+                      <feColorMatrix
+                        in="SourceAlpha"
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                        result="hardAlpha"
+                      />
+                      <feOffset dy="4" />
+                      <feGaussianBlur stdDeviation="2" />
+                      <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
+                      <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+                      <feBlend mode="normal" in2="shape" result="effect1_innerShadow_15473_4390" />
+                    </filter>
+                    <filter
+                      id="filter2_i_15473_4390"
+                      x="47.9721"
+                      y="146.9"
+                      width="100.158"
+                      height="114.252"
+                      filterUnits="userSpaceOnUse"
+                      color-interpolation-filters="sRGB"
+                    >
+                      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+                      <feColorMatrix
+                        in="SourceAlpha"
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                        result="hardAlpha"
+                      />
+                      <feOffset dy="4" />
+                      <feGaussianBlur stdDeviation="2" />
+                      <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
+                      <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+                      <feBlend mode="normal" in2="shape" result="effect1_innerShadow_15473_4390" />
+                    </filter>
+                  </defs>
+                </svg>
+
+                <span class="ml-1">Windsurf</span>
+              </button>
+              <button
+                data-tab-target="#direct-api-tab"
+                class="tab-button group inline-flex items-center py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              >
+                <svg
+                  class="h-4 w-4 mr-2 text-gray-400 group-hover:text-gray-500"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"
+                  />
+                </svg>
+                <span>Direct API</span>
+              </button>
+              <!-- Add more tabs here if needed -->
+            </nav>
+          </div>
+
+          <!-- Tab Content Panels -->
+          <div class="mt-4">
+            <!-- Cursor Tab Content -->
+            <div id="cursor-tab" class="tab-content bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <h3 class="text-lg font-semibold text-gray-900 mb-3">Cursor Installation</h3>
+              <p class="text-sm text-gray-600 mb-4">
+                Add the following configuration to your Cursor
+                <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">mcp.json</code> file.
+              </p>
+              <div class="mb-4">
+                <p class="text-sm text-gray-800 font-medium mb-1">Config file location:</p>
+                <ul class="list-disc list-inside text-sm text-gray-600 space-y-1 pl-1">
+                  <li>
+                    Global:
+                    <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">~/.cursor/mcp.json</code>
+                  </li>
+                  <li>
+                    Project:
+                    <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">.cursor/mcp.json</code> (in
+                    project root)
+                  </li>
+                </ul>
+              </div>
+              <p class="text-sm text-gray-800 font-medium mb-2">Add this JSON object:</p>
+              <div class="relative">
+                <pre class="bg-gray-900 text-gray-200 p-4 pr-16 rounded-lg text-sm overflow-x-auto shadow-inner"><code>{
+  "mcpServers": {
+    "mcp-memory": {
+      "url": "<span id="cursor-config-url" class="font-bold text-orange-400">YOUR_MCP_URL_HERE</span>"
+    }
+  }
+}</code></pre>
+                <button
+                  id="copy-cursor-config-button"
+                  type="button"
+                  class="absolute top-3 right-3 inline-flex items-center rounded bg-gray-700 px-2.5 py-1 text-xs font-medium text-gray-300 shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                  title="Copy Configuration Code"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-3.5 w-3.5 mr-1.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <!-- Claude Tab Content -->
+            <div id="claude-tab" class="tab-content bg-white p-6 rounded-lg shadow-sm border border-gray-200 hidden">
+              <h3 class="text-lg font-semibold text-gray-900 mb-3">Claude Desktop Installation</h3>
+              <p class="text-sm text-gray-600 mb-4">
+                Add the following configuration to your Claude Desktop
+                <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">claude_desktop_config.json</code>
+                file.
+              </p>
+              <div class="mb-4">
+                <p class="text-sm text-gray-800 font-medium mb-1">Config file locations:</p>
+                <ul class="list-disc list-inside text-sm text-gray-600 space-y-1 pl-1">
+                  <li>
+                    macOS:
+                    <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded"
+                      >~/Library/Application Support/Claude/claude_desktop_config.json</code
+                    >
+                  </li>
+                  <li>
+                    Windows:
+                    <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded"
+                      >%APPDATA%\Claude\claude_desktop_config.json</code
+                    >
+                  </li>
+                  <li>
+                    Linux:
+                    <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded"
+                      >~/.config/Claude/claude_desktop_config.json</code
+                    >
+                  </li>
+                </ul>
+              </div>
+              <p class="text-sm text-gray-800 font-medium mb-2">Add this JSON object:</p>
+              <div class="relative">
+                <pre class="bg-gray-900 text-gray-200 p-4 pr-16 rounded-lg text-sm overflow-x-auto shadow-inner"><code>{
+  "mcpServers": {
+    "mcp-memory": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "<span id="claude-config-url" class="font-bold text-orange-400">YOUR_MCP_URL_HERE</span>"
+      ]
+    }
+  }
+}</code></pre>
+                <button
+                  id="copy-claude-config-button"
+                  type="button"
+                  class="absolute top-3 right-3 inline-flex items-center rounded bg-gray-700 px-2.5 py-1 text-xs font-medium text-gray-300 shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                  title="Copy Configuration Code"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-3.5 w-3.5 mr-1.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <!-- Windsurf Tab Content -->
+            <div id="windsurf-tab" class="tab-content bg-white p-6 rounded-lg shadow-sm border border-gray-200 hidden">
+              <h3 class="text-lg font-semibold text-gray-900 mb-3">Windsurf (Codeium) Installation</h3>
+              <p class="text-sm text-gray-600 mb-4">
+                Add the following configuration to your Windsurf
+                <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">mcp_config.json</code> file.
+              </p>
+              <div class="mb-4">
+                <p class="text-sm text-gray-800 font-medium mb-1">Config file location:</p>
+                <p class="text-sm text-gray-600 pl-1">
+                  <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded"
+                    >~/.codeium/windsurf/mcp_config.json</code
+                  >
+                </p>
+              </div>
+              <p class="text-sm text-gray-800 font-medium mb-2">Add this JSON object:</p>
+              <div class="relative">
+                <pre class="bg-gray-900 text-gray-200 p-4 pr-16 rounded-lg text-sm overflow-x-auto shadow-inner"><code>{
+  "mcpServers": {
+    "mcp-memory": {
+      "serverUrl": "<span id="windsurf-config-url" class="font-bold text-orange-400">YOUR_MCP_URL_HERE</span>"
+    }
+  }
+}</code></pre>
+                <button
+                  id="copy-windsurf-config-button"
+                  type="button"
+                  class="absolute top-3 right-3 inline-flex items-center rounded bg-gray-700 px-2.5 py-1 text-xs font-medium text-gray-300 shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                  title="Copy Configuration Code"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-3.5 w-3.5 mr-1.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <!-- Direct API Tab Content -->
+            <div
+              id="direct-api-tab"
+              class="tab-content bg-white p-6 rounded-lg shadow-sm border border-gray-200 hidden"
+            >
+              <h3 class="text-lg font-semibold text-gray-900 mb-3">Direct API Usage</h3>
+              <p class="text-sm text-gray-600 mb-4">The MCP protocol works over HTTP with Server-Sent Events (SSE):</p>
+              <ol class="list-decimal list-outside text-sm text-gray-600 mb-5 space-y-3 pl-5">
+                <li>
+                  Establish an SSE connection via a
+                  <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">GET</code> request to your
+                  unique endpoint:
+                  <div class="mt-1.5 flex items-center space-x-2 bg-gray-100 p-2 rounded border border-gray-200">
+                    <code id="direct-api-url" class="flex-grow text-sm font-mono text-gray-800 break-all"
+                      >YOUR_SSE_ENDPOINT_HERE</code
+                    >
+                    <button
+                      id="copy-direct-api-url-button"
+                      type="button"
+                      class="flex-shrink-0 inline-flex items-center rounded border border-gray-300 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-1 focus:ring-offset-gray-100"
+                      title="Copy SSE URL"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-3.5 w-3.5 mr-1"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                        />
+                      </svg>
+                      Copy
+                    </button>
+                  </div>
+                </li>
+                <li>
+                  The server sends a
+                  <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">message</code> event containing
+                  a JSON object with a
+                  <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">postEndpointUri</code>.
+                </li>
+                <li>
+                  Send your JSON-RPC calls as
+                  <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">POST</code> requests (with
+                  <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded"
+                    >Content-Type: application/json</code
+                  >) to the received
+                  <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">postEndpointUri</code>.
+                </li>
+                <li>
+                  Receive responses as
+                  <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">message</code> events on the
+                  initial SSE connection.
+                </li>
+              </ol>
+              <p class="text-sm text-gray-600">
+                Refer to the
+                <a
+                  href="https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/docs/specification/2024-11-05/basic/transports.mdx#http-with-sse"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-orange-600 hover:text-orange-700 underline font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-1 rounded"
+                >
+                  MCP Transport Specification
+                </a>
+                for full details.
+              </p>
+            </div>
+            <!-- Add more content panels here -->
+          </div>
+        </div>
+        <!-- Tabs End -->
+      </section>
+
+      <section>
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-2xl font-bold leading-7 text-black sm:text-3xl sm:truncate">Your Memories</h2>
+          <div class="flex items-center space-x-3">
+            <button
+              id="refresh-button"
+              type="button"
+              class="inline-flex items-center rounded border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-white"
+            >
+              Refresh
+              <span id="refresh-timer" class="text-xs text-gray-500 ml-1"></span>
+            </button>
+          </div>
+        </div>
+        <div class="bg-white shadow overflow-hidden sm:rounded-md border border-gray-200">
+          <ul role="list" class="divide-y divide-gray-200" id="memories-list">
+            {/* Memories will be loaded here */}
+            <li class="px-4 py-4 sm:px-6">
+              <p class="text-sm font-medium text-gray-500">Loading memories...</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="mt-12 pt-6 border-t border-gray-200 text-center text-sm text-gray-500">
+      Powered by Hono, Cloudflare Workers, Vectorize and D1 database
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const sseUrlInput = document.getElementById("sse-url");
+        const copyButton = document.getElementById("copy-button");
+        const copyButtonText = copyButton.querySelector("span") || copyButton; // Get inner text node if structure changes
+        const copyButtonIcon = copyButton.querySelector("svg");
+        const originalButtonHtml = copyButton.innerHTML; // Store original HTML to revert
+        let sseUrl = "";
+        let userUuid = localStorage.getItem("mcpUserUuid");
+
+        // Generate UUID if not found in localStorage
+        if (!userUuid) {
+          if (window.crypto && window.crypto.randomUUID) {
+            userUuid = window.crypto.randomUUID();
+            localStorage.setItem("mcpUserUuid", userUuid);
+            console.log("Generated new UUID:", userUuid);
+          } else {
+            // Fallback for older browsers (less reliable uniqueness)
+            userUuid = "fallback-" + Date.now() + "-" + Math.random().toString(36).substring(2, 15);
+            localStorage.setItem("mcpUserUuid", userUuid);
+            console.warn("crypto.randomUUID not available, used fallback UUID.");
+          }
+        } else {
+          console.log("Using existing UUID:", userUuid);
+        }
+
+        if (sseUrlInput) {
+          const currentOrigin = window.location.origin;
+          if (userUuid) {
+            sseUrl = `${currentOrigin}/${userUuid}/sse`;
+            sseUrlInput.value = sseUrl;
+            // Update Claude config URL placeholder
+            const claudeUrlSpan = document.getElementById("claude-config-url");
+            if (claudeUrlSpan) {
+              claudeUrlSpan.textContent = sseUrl;
+            }
+            // Update Cursor config URL placeholder
+            const cursorUrlSpan = document.getElementById("cursor-config-url");
+            if (cursorUrlSpan) {
+              cursorUrlSpan.textContent = sseUrl;
+            }
+            // Update Windsurf config URL placeholder
+            const windsurfUrlSpan = document.getElementById("windsurf-config-url");
+            if (windsurfUrlSpan) {
+              windsurfUrlSpan.textContent = sseUrl;
+            }
+            // Update Direct API URL placeholder
+            const directApiUrlCode = document.getElementById("direct-api-url");
+            if (directApiUrlCode) {
+              directApiUrlCode.textContent = sseUrl;
+            }
+          } else {
+            sseUrlInput.value = "Error generating user identifier.";
+            console.error("Could not generate or retrieve UUID.");
+            if (copyButton) {
+              copyButton.disabled = true;
+              copyButton.title = "Cannot copy URL without a user identifier";
+            }
+            sseUrlInput.readOnly = true; // Keep readonly even on error
+          }
+        }
+
+        if (copyButton && sseUrlInput && userUuid) {
+          copyButton.addEventListener("click", () => {
+            navigator.clipboard
+              .writeText(sseUrl)
+              .then(() => {
+                // Use specific classes for the "Copied" state
+                copyButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg> Copied!`;
+                copyButton.classList.remove("bg-orange-600", "hover:bg-orange-700");
+                copyButton.classList.add("bg-amber-500", "hover:bg-amber-600"); // Green for success
+                setTimeout(() => {
+                  copyButton.innerHTML = originalButtonHtml; // Revert to original text + icon
+                  copyButton.classList.remove("bg-amber-500", "hover:bg-amber-600");
+                  copyButton.classList.add("bg-orange-600", "hover:bg-orange-700");
+                }, 2000);
+              })
+              .catch((err) => {
+                console.error("Failed to copy URL: ", err);
+                alert("Failed to copy URL. Please copy it manually.");
+              });
+          });
+        } else if (copyButton) {
+          copyButton.disabled = true;
+          copyButton.title = "Cannot copy URL";
+        }
+      });
+    </script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const memoriesList = document.getElementById("memories-list");
+        const refreshTimerSpan = document.getElementById("refresh-timer");
+        const refreshButton = document.getElementById("refresh-button");
+        const userUuid = localStorage.getItem("mcpUserUuid");
+        const refreshIntervalSeconds = 30;
+        let countdown = refreshIntervalSeconds;
+        let fetchIntervalId = null;
+        let timerIntervalId = null;
+
+        function updateTimerDisplay() {
+          if (refreshTimerSpan) {
+            refreshTimerSpan.textContent = `(${countdown}s) `;
+          }
+        }
+
+        function fetchAndDisplayMemories() {
+          if (!memoriesList || !userUuid) {
+            console.error("Missing memories list element or user UUID.");
+            if (memoriesList) {
+              memoriesList.innerHTML = ""; // Clear loading
+              const li = document.createElement("li");
+              li.className = "px-4 py-4 sm:px-6 text-red-600"; // Use a suitable error color
+              li.textContent = "Could not identify user to load memories.";
+              memoriesList.appendChild(li);
+            }
+            if (fetchIntervalId) clearInterval(fetchIntervalId);
+            if (timerIntervalId) clearInterval(timerIntervalId);
+            if (refreshTimerSpan) refreshTimerSpan.textContent = "Error";
+            return;
+          }
+
+          console.log("Fetching memories...");
+          fetch(`/${userUuid}/memories`)
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              return response.json();
+            })
+            .then((data) => {
+              memoriesList.innerHTML = ""; // Clear previous content or loading message
+              let hasMemories = false;
+              if (data.success && data.memories && data.memories.length > 0) {
+                hasMemories = true;
+                data.memories.forEach((memory) => {
+                  const li = document.createElement("li");
+                  // Added padding and subtle hover effect for light mode
+                  li.className =
+                    "memory-item px-4 py-3 sm:px-6 flex justify-between items-center hover:bg-gray-50 transition duration-150 ease-in-out";
+                  li.dataset.memoryId = memory.id;
+
+                  const contentContainer = document.createElement("div");
+                  contentContainer.className = "flex-grow mr-4 overflow-hidden"; // Added overflow hidden
+
+                  const contentSpan = document.createElement("span");
+                  contentSpan.className = "memory-content text-sm text-gray-800 block truncate"; // Ensure text wraps/truncates nicely
+                  contentSpan.textContent = memory.content || "Empty memory";
+                  contentContainer.appendChild(contentSpan);
+
+                  li.appendChild(contentContainer);
+
+                  const buttonContainer = document.createElement("div");
+                  buttonContainer.className = "flex space-x-2 flex-shrink-0"; // Prevent buttons shrinking too much
+
+                  // Edit button - Light mode style
+                  const editButton = document.createElement("button");
+                  editButton.textContent = "Edit";
+                  editButton.className =
+                    "edit-button inline-flex items-center rounded border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2";
+                  buttonContainer.appendChild(editButton);
+
+                  // Delete button - Light mode style
+                  const deleteButton = document.createElement("button");
+                  deleteButton.textContent = "Delete";
+                  deleteButton.className =
+                    "delete-button inline-flex items-center rounded border border-red-300 bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700 shadow-sm hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2";
+                  buttonContainer.appendChild(deleteButton);
+
+                  li.appendChild(buttonContainer);
+                  memoriesList.appendChild(li);
+                });
+              } else if (data.success) {
+                // No memories found - Enhanced Empty State
+                const li = document.createElement("li");
+                li.className = "px-6 py-12 sm:px-8 text-center"; // Increased padding
+
+                const emptyStateContainer = document.createElement("div");
+                emptyStateContainer.className = "flex flex-col items-center space-y-3";
+
+                // SVG Icon (Example: Document Add icon from Heroicons)
+                const svgIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                svgIcon.setAttribute("class", "h-12 w-12 text-gray-400");
+                svgIcon.setAttribute("fill", "none");
+                svgIcon.setAttribute("viewBox", "0 0 24 24");
+                svgIcon.setAttribute("stroke", "currentColor");
+                svgIcon.setAttribute("stroke-width", "1");
+                svgIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />`;
+                emptyStateContainer.appendChild(svgIcon);
+
+                const heading = document.createElement("h3");
+                heading.className = "text-lg font-semibold text-gray-800";
+                heading.textContent = "No Memories Stored Yet";
+                emptyStateContainer.appendChild(heading);
+
+                const paragraph = document.createElement("p");
+                paragraph.className = "text-sm text-gray-500";
+                paragraph.textContent = "Add your first memory through your MCP client (like Cursor, Claude, etc.).";
+                emptyStateContainer.appendChild(paragraph);
+
+                li.appendChild(emptyStateContainer);
+                memoriesList.appendChild(li);
+              } else {
+                throw new Error(data.error || "Failed to fetch memories");
+              }
+            })
+            .catch((error) => {
+              console.error("Error fetching or processing memories:", error);
+              memoriesList.innerHTML = "";
+              const li = document.createElement("li");
+              li.className = "px-4 py-4 sm:px-6 text-red-600"; // Adjusted error text color
+              li.textContent = `Failed to load memories: ${error.message}`;
+              memoriesList.appendChild(li);
+            });
+
+          countdown = refreshIntervalSeconds;
+          updateTimerDisplay();
+        }
+
+        // --- Edit Mode Functions ---
+
+        function enterEditMode(listItem) {
+          const contentContainer = listItem.querySelector(".flex-grow");
+          const contentSpan = contentContainer.querySelector(".memory-content");
+          const buttonContainer = listItem.querySelector(".flex.space-x-2");
+          const editButton = buttonContainer.querySelector(".edit-button");
+          const deleteButton = buttonContainer.querySelector(".delete-button");
+
+          const currentContent = contentSpan.textContent;
+          listItem.dataset.originalContent = currentContent;
+
+          // Replace span with input - Light mode styling
+          const input = document.createElement("input");
+          input.type = "text";
+          input.value = currentContent;
+          input.className =
+            "memory-input block w-full rounded-md border-gray-300 bg-white py-1 px-2 text-gray-900 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-500 focus:ring-opacity-50 sm:text-sm"; // Light mode input
+          contentContainer.replaceChild(input, contentSpan);
+          input.focus();
+          input.select(); // Select text for easy replacement
+
+          // Change buttons to Save/Cancel - Light mode styling
+          editButton.textContent = "Save";
+          // Remove old styles, add new Save button styles (green)
+          editButton.classList.remove(
+            "edit-button",
+            "border-gray-300",
+            "bg-white",
+            "text-gray-700",
+            "hover:bg-gray-50"
+          );
+          editButton.classList.add(
+            "save-button",
+            "border-green-500",
+            "bg-green-50",
+            "text-green-700",
+            "hover:bg-green-100",
+            "focus:ring-green-500"
+          );
+
+          deleteButton.textContent = "Cancel";
+          // Remove old Delete styles, add new Cancel button styles (neutral gray)
+          deleteButton.classList.remove(
+            "delete-button",
+            "border-red-300",
+            "bg-red-50",
+            "text-red-700",
+            "hover:bg-red-100",
+            "focus:ring-red-500"
+          );
+          deleteButton.classList.add(
+            "cancel-button",
+            "border-gray-300",
+            "bg-white",
+            "text-gray-700",
+            "hover:bg-gray-50",
+            "focus:ring-orange-500"
+          ); // Neutral style for cancel
+        }
+
+        function exitEditMode(listItem, newContent) {
+          const contentContainer = listItem.querySelector(".flex-grow");
+          const input = contentContainer.querySelector(".memory-input");
+          const buttonContainer = listItem.querySelector(".flex.space-x-2");
+          const saveButton = buttonContainer.querySelector(".save-button");
+          const cancelButton = buttonContainer.querySelector(".cancel-button");
+
+          // Replace input with span
+          const contentSpan = document.createElement("span");
+          contentSpan.className = "memory-content text-sm text-gray-800 block truncate"; // Reapply correct light mode class
+          contentSpan.textContent = newContent;
+          contentContainer.replaceChild(contentSpan, input);
+          delete listItem.dataset.originalContent;
+
+          // Change buttons back to Edit/Delete - Light mode styling
+          saveButton.textContent = "Edit";
+          // Remove Save styles, add back Edit styles
+          saveButton.classList.remove(
+            "save-button",
+            "border-green-500",
+            "bg-green-50",
+            "text-green-700",
+            "hover:bg-green-100",
+            "focus:ring-green-500"
+          );
+          saveButton.classList.add(
+            "edit-button",
+            "border-gray-300",
+            "bg-white",
+            "text-gray-700",
+            "hover:bg-gray-50",
+            "focus:ring-orange-500"
+          );
+          saveButton.disabled = false;
+
+          cancelButton.textContent = "Delete";
+          // Remove Cancel styles, add back Delete styles
+          cancelButton.classList.remove(
+            "cancel-button",
+            "border-gray-300",
+            "bg-white",
+            "text-gray-700",
+            "hover:bg-gray-50",
+            "focus:ring-orange-500"
+          );
+          cancelButton.classList.add(
+            "delete-button",
+            "border-red-300",
+            "bg-red-50",
+            "text-red-700",
+            "hover:bg-red-100",
+            "focus:ring-red-500"
+          );
+        }
+
+        function saveChanges(listItem) {
+          const memoryId = listItem.dataset.memoryId;
+          const input = listItem.querySelector(".memory-input");
+          const saveButton = listItem.querySelector(".save-button");
+          const newContent = input.value.trim();
+
+          if (!newContent) {
+            alert("Memory content cannot be empty.");
+            input.focus();
+            return;
+          }
+
+          saveButton.disabled = true;
+          saveButton.textContent = "Saving...";
+
+          fetch(`/${userUuid}/memories/${memoryId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ content: newContent }),
+          })
+            .then((response) => {
+              if (!response.ok) {
+                return response
+                  .json()
+                  .then((err) => {
+                    throw new Error(err.error || `HTTP error! status: ${response.status}`);
+                  })
+                  .catch(() => {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                  });
+              }
+              return response.json();
+            })
+            .then((data) => {
+              if (data.success) {
+                console.log(`Memory ${memoryId} updated successfully.`);
+                exitEditMode(listItem, newContent);
+              } else {
+                throw new Error(data.error || "Update failed on the server.");
+              }
+            })
+            .catch((error) => {
+              console.error("Error updating memory:", error);
+              alert(`Failed to update memory: ${error.message}`);
+              saveButton.disabled = false;
+              saveButton.textContent = "Save"; // Keep Save text on error
+            });
+        }
+
+        // --- End Edit Mode Functions ---
+
+        // Timer countdown logic
+        function startTimer() {
+          if (timerIntervalId) clearInterval(timerIntervalId);
+          timerIntervalId = setInterval(() => {
+            countdown--;
+            if (countdown < 0) {
+              // Reset when it hits 0 or below
+              countdown = refreshIntervalSeconds;
+            }
+            updateTimerDisplay();
+          }, 1000);
+        }
+
+        // Function to reset the automatic fetch interval
+        function resetAutoRefresh() {
+          if (fetchIntervalId) clearInterval(fetchIntervalId);
+          fetchIntervalId = setInterval(fetchAndDisplayMemories, refreshIntervalSeconds * 1000);
+          countdown = refreshIntervalSeconds;
+          updateTimerDisplay();
+          startTimer();
+        }
+
+        // Initial setup
+        if (userUuid && memoriesList && refreshTimerSpan && refreshButton) {
+          fetchAndDisplayMemories(); // Initial fetch
+          resetAutoRefresh(); // Start intervals and timer
+
+          refreshButton.addEventListener("click", () => {
+            console.log("Manual refresh triggered.");
+            fetchAndDisplayMemories(); // Fetch immediately
+            resetAutoRefresh(); // Reset the interval and timer
+          });
+
+          // Event delegation for memory list actions
+          memoriesList.addEventListener("click", function (event) {
+            const target = event.target;
+            const listItem = target.closest(".memory-item");
+            if (!listItem) return;
+
+            const memoryId = listItem.dataset.memoryId;
+
+            // Edit/Save Click
+            if (target.classList.contains("edit-button")) {
+              enterEditMode(listItem);
+            } else if (target.classList.contains("save-button")) {
+              saveChanges(listItem);
+            }
+            // Delete/Cancel Click
+            else if (target.classList.contains("delete-button")) {
+              if (confirm(`Are you sure you want to delete this memory?`)) {
+                const deleteButton = target;
+                deleteButton.disabled = true;
+                deleteButton.textContent = "Deleting...";
+
+                fetch(`/${userUuid}/memories/${memoryId}`, { method: "DELETE" })
+                  .then((response) => {
+                    if (!response.ok) {
+                      return response
+                        .json()
+                        .then((err) => {
+                          throw new Error(err.error || `HTTP error! status: ${response.status}`);
+                        })
+                        .catch(() => {
+                          throw new Error(`HTTP error! status: ${response.status}`);
+                        });
+                    }
+                    return response.json();
+                  })
+                  .then((data) => {
+                    if (data.success) {
+                      console.log(`Memory ${memoryId} deleted successfully.`);
+                      listItem.remove();
+                      // Check if list is now empty after deletion
+                      const hasMemories = memoriesList.querySelector(".memory-item") !== null;
+                      if (!hasMemories) {
+                        const li = document.createElement("li");
+                        li.className = "px-6 py-12 sm:px-8 text-center"; // Match the enhanced empty state style
+
+                        const emptyStateContainer = document.createElement("div");
+                        emptyStateContainer.className = "flex flex-col items-center space-y-3";
+
+                        // SVG Icon
+                        const svgIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                        svgIcon.setAttribute("class", "h-12 w-12 text-gray-400");
+                        svgIcon.setAttribute("fill", "none");
+                        svgIcon.setAttribute("viewBox", "0 0 24 24");
+                        svgIcon.setAttribute("stroke", "currentColor");
+                        svgIcon.setAttribute("stroke-width", "1");
+                        svgIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />`;
+                        emptyStateContainer.appendChild(svgIcon);
+
+                        const heading = document.createElement("h3");
+                        heading.className = "text-lg font-semibold text-gray-800";
+                        heading.textContent = "No Memories Stored Yet";
+                        emptyStateContainer.appendChild(heading);
+
+                        const paragraph = document.createElement("p");
+                        paragraph.className = "text-sm text-gray-500";
+                        paragraph.textContent =
+                          "Add your first memory through your connected MCP client (like Cursor, Claude, etc.).";
+                        emptyStateContainer.appendChild(paragraph);
+
+                        li.appendChild(emptyStateContainer);
+                        memoriesList.appendChild(li);
+                      }
+                    } else {
+                      throw new Error(data.error || "Deletion failed on the server.");
+                    }
+                  })
+                  .catch((error) => {
+                    console.error("Error deleting memory:", error);
+                    alert(`Failed to delete memory: ${error.message}`);
+                    deleteButton.disabled = false;
+                    deleteButton.textContent = "Delete"; // Revert button text on error
+                  });
+              }
+            } else if (target.classList.contains("cancel-button")) {
+              const originalContent = listItem.dataset.originalContent || ""; // Fallback if somehow missing
+              exitEditMode(listItem, originalContent);
+            }
+          });
+
+          // Handle Enter/Escape key press in edit mode input field
+          memoriesList.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" && event.target.classList.contains("memory-input")) {
+              event.preventDefault(); // Prevent form submission if inside a form
+              const listItem = event.target.closest(".memory-item");
+              if (listItem) {
+                saveChanges(listItem);
+              }
+            } else if (event.key === "Escape" && event.target.classList.contains("memory-input")) {
+              event.preventDefault(); // Prevent potential browser actions
+              const listItem = event.target.closest(".memory-item");
+              if (listItem) {
+                const originalContent = listItem.dataset.originalContent || "";
+                exitEditMode(listItem, originalContent);
+              }
+            }
+          });
+        } else {
+          // Handle missing elements or UUID on initial load
+          if (refreshTimerSpan) refreshTimerSpan.textContent = "Setup Error";
+          if (memoriesList && !userUuid) {
+            memoriesList.innerHTML = "";
+            const li = document.createElement("li");
+            li.className = "px-4 py-4 sm:px-6 text-red-600"; // Use error color
+            li.textContent = "Could not identify user to load memories.";
+            memoriesList.appendChild(li);
+          }
+          console.error("Initial setup failed: Missing critical elements or UUID.");
+        }
+      });
+    </script>
+
+    <!-- Script for Direct API URL Copy Button -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const copyDirectApiButton = document.getElementById("copy-direct-api-url-button");
+        const directApiUrlCode = document.getElementById("direct-api-url");
+
+        if (copyDirectApiButton && directApiUrlCode) {
+          const originalButtonHtml = copyDirectApiButton.innerHTML;
+
+          copyDirectApiButton.addEventListener("click", () => {
+            const urlToCopy = directApiUrlCode.textContent || "";
+
+            if (!urlToCopy || urlToCopy === "YOUR_SSE_ENDPOINT_HERE") {
+              alert("URL not generated yet.");
+              return;
+            }
+
+            navigator.clipboard
+              .writeText(urlToCopy)
+              .then(() => {
+                copyDirectApiButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg> Copied!`;
+                copyDirectApiButton.classList.remove(
+                  "bg-white",
+                  "text-gray-700",
+                  "hover:bg-gray-50",
+                  "border-gray-300"
+                );
+                copyDirectApiButton.classList.add("bg-green-100", "text-green-800", "border-green-300");
+                setTimeout(() => {
+                  copyDirectApiButton.innerHTML = originalButtonHtml;
+                  copyDirectApiButton.classList.remove("bg-green-100", "text-green-800", "border-green-300");
+                  copyDirectApiButton.classList.add("bg-white", "text-gray-700", "hover:bg-gray-50", "border-gray-300");
+                }, 2000);
+              })
+              .catch((err) => {
+                console.error("Failed to copy Direct API URL: ", err);
+                alert("Failed to copy URL. Please copy it manually.");
+              });
+          });
+        }
+      });
+    </script>
+
+    <!-- Script for Tab Functionality -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const tabs = document.querySelectorAll(".tab-button");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", function () {
+            const target = document.querySelector(tab.dataset.tabTarget);
+
+            // Hide all tab contents
+            tabContents.forEach((tc) => {
+              tc.classList.add("hidden");
+            });
+
+            // Show the target tab content
+            if (target) {
+              target.classList.remove("hidden");
+            }
+
+            // Update tab button styles
+            tabs.forEach((t) => {
+              t.classList.remove("border-orange-500", "text-orange-600");
+              t.classList.add("border-transparent", "text-gray-500", "hover:text-gray-700", "hover:border-gray-300");
+              t.removeAttribute("aria-current");
+            });
+
+            // Style the active tab button
+            tab.classList.add("border-orange-500", "text-orange-600");
+            tab.classList.remove("border-transparent", "text-gray-500", "hover:text-gray-700", "hover:border-gray-300");
+            tab.setAttribute("aria-current", "page");
+          });
+        });
+
+        // Optional: Activate the first tab by default if needed, though HTML handles the initial state
+        // const firstTab = document.querySelector('.tab-button');
+        // if (firstTab) {
+        //     firstTab.click(); // Simulate a click to set initial state via JS if necessary
+        // }
+      });
+    </script>
+
+    <!-- NEW SCRIPT: Reusable Config Copy Button Logic -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        function setupConfigCopyButton(buttonId, codeBlockSelector, urlSpanId) {
+          const copyButton = document.getElementById(buttonId);
+          const codeBlock = document.querySelector(codeBlockSelector);
+
+          if (!copyButton || !codeBlock) {
+            console.warn(`Could not setup copy button: ${buttonId} - elements not found.`);
+            return;
+          }
+
+          const originalButtonHtml = copyButton.innerHTML;
+          // Store original classes to revert correctly
+          const originalButtonClasses = Array.from(copyButton.classList);
+
+          copyButton.addEventListener("click", () => {
+            const sseUrl = document.getElementById("sse-url")?.value || "";
+            const urlSpan = codeBlock.querySelector(`#${urlSpanId}`);
+            let codeToCopy = "";
+
+            // Construct the code string without modifying the DOM temporarily
+            const codeLines = codeBlock.textContent.split("\\n");
+            const urlPlaceholder = `<span id="${urlSpanId}" class="font-bold text-orange-400">YOUR_MCP_URL_HERE</span>`;
+
+            codeToCopy = codeLines
+              .map((line) => {
+                // Find the line with the placeholder span and replace its content representation
+                // This is a bit simplified; assumes placeholder is on its own line or easily replaceable
+                if (line.includes(urlPlaceholder)) {
+                  // Attempt to preserve indentation
+                  const indentation = line.match(/^\\s*/)[0] || "";
+                  return `${indentation}"${sseUrl}"`; // Replace the whole line content part for simplicity
+                }
+                return line;
+              })
+              .join("\\n");
+
+            // Fallback if replacement wasn't perfect, just use raw text content
+            if (!codeToCopy.includes(sseUrl) && codeBlock.textContent) {
+              console.warn(
+                "Placeholder replacement failed for",
+                buttonId,
+                "using raw textContent with manual replace."
+              );
+              codeToCopy = codeBlock.textContent.replace(urlPlaceholder, `"${sseUrl}"`);
+            }
+
+            // Ensure we have a valid URL before trying to copy
+            if (!sseUrl || sseUrl === "YOUR_MCP_URL_HERE" || sseUrl.startsWith("Error")) {
+              alert("MCP Server URL is not available yet.");
+              return;
+            }
+
+            navigator.clipboard
+              .writeText(codeToCopy.trim())
+              .then(() => {
+                copyButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg> Copied!`;
+                // Use consistent "Copied" styling - yellow like the main copy button
+                copyButton.className = ""; // Clear existing classes
+                copyButton.classList.add(...originalButtonClasses); // Re-add base classes
+                copyButton.classList.remove("bg-gray-700", "hover:bg-gray-600", "text-gray-300");
+                copyButton.classList.add("bg-amber-500", "hover:bg-amber-600", "text-white"); // Yellow for success
+
+                setTimeout(() => {
+                  copyButton.innerHTML = originalButtonHtml;
+                  // Restore original classes precisely
+                  copyButton.className = "";
+                  copyButton.classList.add(...originalButtonClasses);
+                }, 2000);
+              })
+              .catch((err) => {
+                console.error(`Failed to copy config for ${buttonId}: `, err);
+                alert("Failed to copy code. Please copy it manually.");
+              });
+          });
+        }
+
+        // Setup for each config button
+        setupConfigCopyButton("copy-cursor-config-button", "#cursor-tab pre code", "cursor-config-url");
+        setupConfigCopyButton("copy-claude-config-button", "#claude-tab pre code", "claude-config-url");
+        setupConfigCopyButton("copy-windsurf-config-button", "#windsurf-tab pre code", "windsurf-config-url");
+      });
+    </script>
+  </body>
+</html>

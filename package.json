@@ -1,0 +1,28 @@
+{
+	"name": "mcp-memory",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev --experimental-vectorize-bind-to-prod",
+		"format": "biome format --write",
+		"lint:fix": "biome lint --fix",
+		"start": "wrangler dev",
+		"cf-typegen": "wrangler types"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "^4.20250421.0",
+		"@types/node": "^22.14.1",
+		"@types/uuid": "^10.0.0",
+		"typescript": "^5.5.2",
+		"workers-mcp": "^0.1.0-3",
+		"wrangler": "^4.6.0"
+	},
+	"dependencies": {
+		"@modelcontextprotocol/sdk": "^1.7.0",
+		"agents": "^0.0.60",
+		"hono": "^4.7.4",
+		"uuid": "^11.1.0",
+		"zod": "^3.24.2"
+	}
+}
