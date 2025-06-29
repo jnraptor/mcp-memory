@@ -136,7 +136,7 @@ app.put("/:userId/memories/:memoryId", async (c) => {
 app.post("/:userId/mcp/", async (c) => {
 	const userId = c.req.param("userId");
 	const ctx = { props: { userId } };
-	return await MyMCP.serve(`/${userId}/mcp`).fetch(c.req.raw, c.env, ctx);
+	return await MyMCP.serve(`/${userId}/mcp/`).fetch(c.req.raw, c.env, ctx);
 });
 
 app.mount("/", async (req, env, ctx) => {
