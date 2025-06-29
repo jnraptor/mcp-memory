@@ -132,13 +132,6 @@ app.put("/:userId/memories/:memoryId", async (c) => {
 	}
 });
 
-// Streamable HTTP MCP endpoint
-app.all("/:userId/mcp/?", async (c) => {
-	const userId = c.req.param("userId");
-	const ctx = { props: { userId } };
-	return await MyMCP.serve(`/${userId}/mcp`).fetch(c.req.raw, c.env, ctx);
-});
-
 app.mount("/", async (req, env, ctx) => {
 	// Hono's app.mount handler receives the raw Request, not the Hono Context.
 	const url = new URL(req.url);
@@ -157,14 +150,17 @@ app.mount("/", async (req, env, ctx) => {
 		userId: userId,
 	};
 
-	// So the full path handled by MCPMemory will be /:userId/sse
-	const response = await MyMCP.serveSSE(`/${userId}/sse`).fetch(req, env, ctx);
+	if (pathSegments[1] === "sse") {
+		// So the full path handled by MCPMemory will be /:userId/sse
+		return await MyMCP.serveSSE(`/${userId}/sse`).fetch(req, env, ctx);
+    }
 
-	if (response) {
-		return response;
-	}
+	if (pathSegments[1] === "mcp") {
+		// So the full path handled by MCPMemory will be /:userId/mcp
+		return await MyMCP.serve(`/${userId}/mcp`).fetch(req, env, ctx);
+    }
 
-	// Fallback if MCPMemory doesn't handle the specific request under its serveSSE point
+	// Fallback if MCPMemory doesn't handle the specific request under its serveSSE or serve point
 	return new Response("Not Found within MCP serveSSE", { status: 404 });
 });
 
