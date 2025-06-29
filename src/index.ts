@@ -132,6 +132,13 @@ app.put("/:userId/memories/:memoryId", async (c) => {
 	}
 });
 
+// Handle trailing slash case for MCP endpoint
+app.all("/:userId/mcp/", async (c) => {
+	const userId = c.req.param("userId");
+	const ctx = { props: { userId } };
+	return await MyMCP.serve(`/${userId}/mcp`).fetch(c.req.raw, c.env, ctx);
+});
+
 app.mount("/", async (req, env, ctx) => {
 	// Hono's app.mount handler receives the raw Request, not the Hono Context.
 	const url = new URL(req.url);
