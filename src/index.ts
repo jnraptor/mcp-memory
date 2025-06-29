@@ -150,12 +150,12 @@ app.mount("/", async (req, env, ctx) => {
 		userId: userId,
 	};
 
-	if (pathSegments[1] === "sse") {
+	if (pathSegments[2] === "sse") {
 		// So the full path handled by MCPMemory will be /:userId/sse
 		return await MyMCP.serveSSE(`/${userId}/sse`).fetch(req, env, ctx);
     }
 
-	if (pathSegments[1] === "mcp") {
+	if (pathSegments[2] === "mcp") {
 		// So the full path handled by MCPMemory will be /:userId/mcp
 		return await MyMCP.serve(`/${userId}/mcp`).fetch(req, env, ctx);
     }
