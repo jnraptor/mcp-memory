@@ -1456,7 +1456,7 @@
           const originalButtonClasses = Array.from(copyButton.classList);
 
           copyButton.addEventListener("click", () => {
-            const sseUrl = document.getElementById("sse-url")?.value || "";
+            const sseUrl = document.getElementById("mcp-url")?.value || "";
             const urlSpan = codeBlock.querySelector(`#${urlSpanId}`);
             let codeToCopy = "";
 
