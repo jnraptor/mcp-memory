@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { storeMemoryInD1 } from "./utils/db";
 import { searchMemories, storeMemory } from "./utils/vectorize";
-import type { SessionData } from "./session-manager";
 
 // JSON-RPC 2.0 types
 interface JsonRpcRequest {
@@ -76,45 +75,15 @@ export class StreamableHttpHandler {
         const sessionHeader = request.headers.get("Mcp-Session-Id");
         
         if (sessionHeader) {
-            // Try to get existing session from Durable Object
-            try {
-                const sessionManager = this.env.SESSION_MANAGER.get(
-                    this.env.SESSION_MANAGER.idFromName(this.userId)
-                );
-                
-                const response = await sessionManager.fetch(new Request("http://dummy/get", {
-                    method: "POST",
-                    body: JSON.stringify({ sessionId: sessionHeader }),
-                    headers: { "Content-Type": "application/json" }
-                }));
-
-                if (response.ok) {
-                    return sessionHeader;
-                }
-            } catch (error) {
-                console.warn("Failed to retrieve session:", error);
+            // For now, accept any session ID (simple validation)
+            if (sessionHeader.length > 10) {
+                return sessionHeader;
             }
         }
 
-        // Create new session
+        // Create new session ID
         const sessionId = uuidv4();
-        try {
-            const sessionManager = this.env.SESSION_MANAGER.get(
-                this.env.SESSION_MANAGER.idFromName(this.userId)
-            );
-            
-            await sessionManager.fetch(new Request("http://dummy/create", {
-                method: "POST",
-                body: JSON.stringify({ 
-                    sessionId, 
-                    userId: this.userId,
-                    metadata: {}
-                }),
-                headers: { "Content-Type": "application/json" }
-            }));
-        } catch (error) {
-            console.warn("Failed to create session in Durable Object:", error);
-        }
+        console.log(`Created new session: ${sessionId} for user: ${this.userId}`);
         
         return sessionId;
     }

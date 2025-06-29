@@ -10,7 +10,7 @@
   "compatibility_flags": ["nodejs_compat"],
   "migrations": [
     {
-      "new_sqlite_classes": ["MyMCP", "SessionManager"],
+      "new_sqlite_classes": ["MyMCP"],
       "tag": "v1"
     }
   ],
@@ -39,10 +39,6 @@
       {
         "class_name": "MyMCP",
         "name": "MCP_OBJECT"
-      },
-      {
-        "class_name": "SessionManager",
-        "name": "SESSION_MANAGER"
       }
     ]
   },

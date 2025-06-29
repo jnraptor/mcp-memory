@@ -154,4 +154,3 @@ app.mount("/", async (req, env, ctx) => {
 export default app;
 
 export { MyMCP };
-export { SessionManager } from "./session-manager";

@@ -28,7 +28,7 @@ This is an MCP (Model Context Protocol) Memory Server built on Cloudflare's infr
 **Streamable HTTP MCP Handler (`src/streamable-http.ts`)**
 - Implements MCP 2025-03-26 streamable HTTP protocol with JSON-RPC 2.0
 - Supports both single JSON responses and SSE streaming
-- Session management via `Mcp-Session-Id` header and Durable Objects
+- Simple session management via `Mcp-Session-Id` header generation
 - Exposes tools: `addToMCPMemory`, `searchMCPMemory`, plus `initialize` and `tools/list`
 
 **Legacy MCP Agent (`src/mcp.ts`)**
@@ -36,11 +36,6 @@ This is an MCP (Model Context Protocol) Memory Server built on Cloudflare's infr
 - Exposes two main tools: `addToMCPMemory` and `searchMCPMemory`
 - Uses Durable Objects (MyMCP class) for stateful operations
 - Receives userId via props from the routing layer
-
-**Session Manager (`src/session-manager.ts`)**
-- Durable Object for persistent session state management
-- Handles session creation, updates, and cleanup
-- Stores session metadata and tracks activity timestamps
 
 **HTTP API (`src/index.ts`)**
 - Hono-based REST API for memory management
@@ -73,9 +68,7 @@ This is an MCP (Model Context Protocol) Memory Server built on Cloudflare's infr
 ### Key Configuration
 
 **Wrangler Configuration (`wrangler.jsonc`):**
-- Durable Object bindings: 
-  - `MCP_OBJECT` → `MyMCP` (legacy agent)
-  - `SESSION_MANAGER` → `SessionManager` (streamable HTTP sessions)
+- Durable Object binding: `MCP_OBJECT` → `MyMCP` (legacy agent)
 - D1 binding: `DB` → database
 - Vectorize binding: `VECTORIZE` → index
 - Workers AI binding: `AI`
@@ -99,7 +92,7 @@ This is an MCP (Model Context Protocol) Memory Server built on Cloudflare's infr
 - Methods: POST (JSON-RPC requests), GET (SSE streams, capabilities)
 - Headers: `Accept` (application/json + text/event-stream), `Mcp-Session-Id`
 - Protocol: JSON-RPC 2.0 with MCP extensions
-- Session management via Durable Objects
+- Simple session management via UUID generation
 
 **Legacy HTTP+SSE (Deprecated)**
 - Endpoint: `/:userId/sse` 
