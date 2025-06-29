@@ -7,7 +7,6 @@ import {
 	updateMemoryInD1,
 } from "./utils/db";
 import { deleteVectorById, updateMemoryVector } from "./utils/vectorize";
-import { StreamableHttpHandler } from "./streamable-http";
 
 const app = new Hono<{
 	Bindings: Env;
@@ -136,14 +135,8 @@ app.put("/:userId/memories/:memoryId", async (c) => {
 // Streamable HTTP MCP endpoint
 app.all("/:userId/mcp", async (c) => {
 	const userId = c.req.param("userId");
-
-	try {
-		const handler = new StreamableHttpHandler(c.env, userId);
-		return await handler.handleRequest(c.req.raw);
-	} catch (error) {
-		console.error("Error in streamable HTTP handler:", error);
-		return c.json({ error: "Internal server error" }, 500);
-	}
+	const ctx = { props: { userId } };
+	return await MyMCP.serve(`/${userId}/mcp`).fetch(c.req.raw, c.env, ctx);
 });
 
 app.mount("/", async (req, env, ctx) => {
