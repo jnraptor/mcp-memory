@@ -9,18 +9,8 @@ export interface SessionData {
 }
 
 export class SessionManager extends DurableObject {
-    private sessions = new Map<string, SessionData>();
-
     constructor(ctx: DurableObjectState, env: Env) {
         super(ctx, env);
-        
-        // Load existing sessions from storage
-        this.ctx.blockConcurrencyWhile(async () => {
-            const stored = await this.ctx.storage.list<SessionData>();
-            for (const [key, value] of stored) {
-                this.sessions.set(key, value);
-            }
-        });
     }
 
     async fetch(request: Request): Promise<Response> {
@@ -71,7 +61,6 @@ export class SessionManager extends DurableObject {
             metadata,
         };
 
-        this.sessions.set(sessionId, sessionData);
         await this.ctx.storage.put(sessionId, sessionData);
 
         return new Response(JSON.stringify(sessionData), {
@@ -82,7 +71,7 @@ export class SessionManager extends DurableObject {
     private async updateSession(request: Request): Promise<Response> {
         const { sessionId, metadata } = await request.json();
 
-        const session = this.sessions.get(sessionId);
+        const session = await this.ctx.storage.get<SessionData>(sessionId);
         if (!session) {
             return new Response("Session not found", { status: 404 });
         }
@@ -92,7 +81,6 @@ export class SessionManager extends DurableObject {
             session.metadata = { ...session.metadata, ...metadata };
         }
 
-        this.sessions.set(sessionId, session);
         await this.ctx.storage.put(sessionId, session);
 
         return new Response(JSON.stringify(session), {
@@ -103,14 +91,13 @@ export class SessionManager extends DurableObject {
     private async getSession(request: Request): Promise<Response> {
         const { sessionId } = await request.json();
 
-        const session = this.sessions.get(sessionId);
+        const session = await this.ctx.storage.get<SessionData>(sessionId);
         if (!session) {
             return new Response("Session not found", { status: 404 });
         }
 
         // Update last activity
         session.lastActivity = Date.now();
-        this.sessions.set(sessionId, session);
         await this.ctx.storage.put(sessionId, session);
 
         return new Response(JSON.stringify(session), {
@@ -121,12 +108,11 @@ export class SessionManager extends DurableObject {
     private async deleteSession(request: Request): Promise<Response> {
         const { sessionId } = await request.json();
 
-        const session = this.sessions.get(sessionId);
+        const session = await this.ctx.storage.get<SessionData>(sessionId);
         if (!session) {
             return new Response("Session not found", { status: 404 });
         }
 
-        this.sessions.delete(sessionId);
         await this.ctx.storage.delete(sessionId);
 
         return new Response("Session deleted", { status: 200 });
@@ -136,12 +122,17 @@ export class SessionManager extends DurableObject {
         const now = Date.now();
         const maxAge = 24 * 60 * 60 * 1000; // 24 hours
         let cleanedCount = 0;
+        let activeSessions = 0;
 
-        for (const [sessionId, session] of this.sessions.entries()) {
+        // Get all sessions from storage
+        const sessions = await this.ctx.storage.list<SessionData>();
+        
+        for (const [sessionId, session] of sessions) {
             if (now - session.lastActivity > maxAge) {
-                this.sessions.delete(sessionId);
                 await this.ctx.storage.delete(sessionId);
                 cleanedCount++;
+            } else {
+                activeSessions++;
             }
         }
 
@@ -149,7 +140,7 @@ export class SessionManager extends DurableObject {
             JSON.stringify({ 
                 message: "Cleanup completed", 
                 cleanedSessions: cleanedCount,
-                activeSessions: this.sessions.size
+                activeSessions: activeSessions
             }),
             { headers: { "Content-Type": "application/json" } }
         );

@@ -10,12 +10,8 @@
   "compatibility_flags": ["nodejs_compat"],
   "migrations": [
     {
-      "new_sqlite_classes": ["MyMCP"],
+      "new_sqlite_classes": ["MyMCP", "SessionManager"],
       "tag": "v1"
-    },
-    {
-      "new_classes": ["SessionManager"],
-      "tag": "v2"
     }
   ],
   "unsafe": {
