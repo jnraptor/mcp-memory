@@ -10,7 +10,7 @@ import { deleteVectorById, updateMemoryVector } from "./utils/vectorize";
 
 const app = new Hono<{
 	Bindings: Env;
-}>();
+}>({strict: false});
 
 // Initialize database once
 let dbInitialized = false;
