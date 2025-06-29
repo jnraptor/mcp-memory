@@ -11,14 +11,14 @@ const MINIMUM_SIMILARITY_SCORE = 0.5;
  * @returns Promise resolving to an array of numerical values representing the text embedding
  */
 async function generateEmbeddings(text: string, env: Env): Promise<number[]> {
-  const embeddings = (await env.AI.run("@cf/baai/bge-m3", {
-    text,
-  })) as AiTextEmbeddingsOutput;
+	const embeddings = (await env.AI.run("@cf/baai/bge-m3", {
+		text,
+	})) as AiTextEmbeddingsOutput;
 
-  const values = embeddings.data[0];
-  if (!values) throw new Error("Failed to generate vector embedding");
+	const values = embeddings.data[0];
+	if (!values) throw new Error("Failed to generate vector embedding");
 
-  return values;
+	return values;
 }
 
 /**
@@ -29,22 +29,22 @@ async function generateEmbeddings(text: string, env: Env): Promise<number[]> {
  * @returns Promise resolving to the unique memory ID
  */
 export async function storeMemory(text: string, userId: string, env: Env): Promise<string> {
-  const memoryId = uuidv4();
+	const memoryId = uuidv4();
 
-  // Generate embedding
-  const values = await generateEmbeddings(text, env);
+	// Generate embedding
+	const values = await generateEmbeddings(text, env);
 
-  // Store in Vectorize
-  await env.VECTORIZE.upsert([
-    {
-      id: memoryId,
-      values,
-      namespace: userId,
-      metadata: { content: text },
-    },
-  ]);
+	// Store in Vectorize
+	await env.VECTORIZE.upsert([
+		{
+			id: memoryId,
+			values,
+			namespace: userId,
+			metadata: { content: text },
+		},
+	]);
 
-  return memoryId;
+	return memoryId;
 }
 
 /**
@@ -55,48 +55,48 @@ export async function storeMemory(text: string, userId: string, env: Env): Promi
  * @returns Promise resolving to an array of memories matching the query
  */
 export async function searchMemories(
-  query: string,
-  userId: string,
-  env: Env
+	query: string,
+	userId: string,
+	env: Env,
 ): Promise<Array<{ content: string; score: number; id: string }>> {
-  // Generate embedding for query
-  const queryVector = await generateEmbeddings(query, env);
+	// Generate embedding for query
+	const queryVector = await generateEmbeddings(query, env);
 
-  // Search Vectorize
-  const results = await env.VECTORIZE.query(queryVector, {
-    namespace: userId,
-    topK: 10,
-    returnMetadata: "all",
-  });
+	// Search Vectorize
+	const results = await env.VECTORIZE.query(queryVector, {
+		namespace: userId,
+		topK: 10,
+		returnMetadata: "all",
+	});
 
-  if (!results.matches || results.matches.length === 0) {
-    return [];
-  }
+	if (!results.matches || results.matches.length === 0) {
+		return [];
+	}
 
-  // Process results
-  const memories = results.matches
-    .filter((match) => match.score > MINIMUM_SIMILARITY_SCORE)
-    .map((match) => {
-      // Ensure content is a string
-      let content = "Missing memory content";
+	// Process results
+	const memories = results.matches
+		.filter((match) => match.score > MINIMUM_SIMILARITY_SCORE)
+		.map((match) => {
+			// Ensure content is a string
+			let content = "Missing memory content";
 
-      if (match.metadata && typeof match.metadata.content === "string") {
-        content = match.metadata.content;
-      } else if (match.id) {
-        content = `Missing memory content (ID: ${match.id})`;
-      }
+			if (match.metadata && typeof match.metadata.content === "string") {
+				content = match.metadata.content;
+			} else if (match.id) {
+				content = `Missing memory content (ID: ${match.id})`;
+			}
 
-      return {
-        content,
-        score: match.score || 0,
-        id: match.id,
-      };
-    });
+			return {
+				content,
+				score: match.score || 0,
+				id: match.id,
+			};
+		});
 
-  // Sort by relevance score (highest first)
-  memories.sort((a, b) => b.score - a.score);
+	// Sort by relevance score (highest first)
+	memories.sort((a, b) => b.score - a.score);
 
-  return memories;
+	return memories;
 }
 
 /**
@@ -107,25 +107,25 @@ export async function searchMemories(
  * @param env - Environment containing Vectorize service
  */
 export async function updateMemoryVector(
-  memoryId: string,
-  newContent: string,
-  userId: string,
-  env: Env
+	memoryId: string,
+	newContent: string,
+	userId: string,
+	env: Env,
 ): Promise<void> {
-  // Generate new embedding
-  const newValues = await generateEmbeddings(newContent, env);
+	// Generate new embedding
+	const newValues = await generateEmbeddings(newContent, env);
 
-  // Upsert into Vectorize to update
-  await env.VECTORIZE.upsert([
-    {
-      id: memoryId,
-      values: newValues,
-      namespace: userId,
-      metadata: { content: newContent }, // Update metadata as well
-    },
-  ]);
+	// Upsert into Vectorize to update
+	await env.VECTORIZE.upsert([
+		{
+			id: memoryId,
+			values: newValues,
+			namespace: userId,
+			metadata: { content: newContent }, // Update metadata as well
+		},
+	]);
 
-  console.log(`Vector for memory ${memoryId} (namespace ${userId}) updated.`);
+	console.log(`Vector for memory ${memoryId} (namespace ${userId}) updated.`);
 }
 
 /**
@@ -135,16 +135,19 @@ export async function updateMemoryVector(
  * @param env - Environment containing Vectorize service
  */
 export async function deleteVectorById(memoryId: string, userId: string, env: Env): Promise<void> {
-  try {
-    // todo WARNING: This might delete the ID globally if namespaces are not implicitly handled.
-    // Further investigation needed on how Vectorize handles namespaces during deletion.
-    const result = await env.VECTORIZE.deleteByIds([memoryId]);
-    console.log(
-      `Attempted global deletion for vector ID ${memoryId}. Deletion was requested for user (namespace): ${userId} Result:`,
-      result
-    );
-  } catch (error) {
-    console.error(`Error deleting vector ID ${memoryId} from Vectorize namespace ${userId}:`, error);
-    throw error;
-  }
+	try {
+		// todo WARNING: This might delete the ID globally if namespaces are not implicitly handled.
+		// Further investigation needed on how Vectorize handles namespaces during deletion.
+		const result = await env.VECTORIZE.deleteByIds([memoryId]);
+		console.log(
+			`Attempted global deletion for vector ID ${memoryId}. Deletion was requested for user (namespace): ${userId} Result:`,
+			result,
+		);
+	} catch (error) {
+		console.error(
+			`Error deleting vector ID ${memoryId} from Vectorize namespace ${userId}:`,
+			error,
+		);
+		throw error;
+	}
 }
