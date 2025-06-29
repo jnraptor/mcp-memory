@@ -69,12 +69,33 @@
       </section>
 
       <section class="bg-gray-50 p-6 rounded-lg shadow-md border border-gray-200">
-        <label for="sse-url" class="block text-sm font-medium text-gray-700 mb-1">Your Personal MCP Server URL:</label>
+        <!-- Protocol Selection Toggle -->
+        <div class="mb-4">
+          <p class="block text-sm font-medium text-gray-700 mb-2">Protocol Version:</p>
+          <div class="flex items-center space-x-4">
+            <label class="inline-flex items-center">
+              <input type="radio" name="protocol" value="http" class="form-radio text-orange-600 focus:ring-orange-500" checked>
+              <span class="ml-2 text-sm text-gray-700">
+                <span class="font-medium">Modern Streamable HTTP</span>
+                <span class="inline-block ml-1 px-2 py-0.5 text-xs font-semibold text-green-800 bg-green-100 rounded-full">Recommended</span>
+              </span>
+            </label>
+            <label class="inline-flex items-center">
+              <input type="radio" name="protocol" value="sse" class="form-radio text-orange-600 focus:ring-orange-500">
+              <span class="ml-2 text-sm text-gray-700">
+                <span class="font-medium">Legacy SSE</span>
+                <span class="inline-block ml-1 px-2 py-0.5 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">Deprecated</span>
+              </span>
+            </label>
+          </div>
+        </div>
+        
+        <label for="mcp-url" class="block text-sm font-medium text-gray-700 mb-1">Your Personal MCP Server URL:</label>
         <div class="flex items-center space-x-3">
           <input
             type="text"
-            name="sse-url"
-            id="sse-url"
+            name="mcp-url"
+            id="mcp-url"
             class="flex-grow block w-full rounded-md border-gray-300 bg-white py-3 px-4 text-gray-900 shadow-sm focus:border-orange-500 focus:ring focus:ring-orange-500 focus:ring-opacity-50 text-lg"
             readonly
             placeholder="Generating URL..."
@@ -190,6 +211,26 @@
                   ></path>
                 </svg>
                 <span class="ml-1">Claude</span>
+              </button>
+              <button
+                data-tab-target="#claude-code-tab"
+                class="tab-button group inline-flex items-center py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              >
+                <svg
+                  height="1.2em"
+                  style="flex: none; line-height: 1"
+                  viewBox="0 0 24 24"
+                  width="1.2em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <title>Claude Code</title>
+                  <path
+                    d="M4.709 15.955l4.72-2.647.08-.23-.08-.128H9.2l-.79-.048-2.698-.073-2.339-.097-2.266-.122-.571-.121L0 11.784l.055-.352.48-.321.686.06 1.52.103 2.278.158 1.652.097 2.449.255h.389l.055-.157-.134-.098-.103-.097-2.358-1.596-2.552-1.688-1.336-.972-.724-.491-.364-.462-.158-1.008.656-.722.881.06.225.061.893.686 1.908 1.476 2.491 1.833.365.304.145-.103.019-.073-.164-.274-1.355-2.446-1.446-2.49-.644-1.032-.17-.619a2.97 2.97 0 01-.104-.729L6.283.134 6.696 0l.996.134.42.364.62 1.414 1.002 2.229 1.555 3.03.456.898.243.832.091.255h.158V9.01l.128-1.706.237-2.095.23-2.695.08-.76.376-.91.747-.492.584.28.48.685-.067.444-.286 1.851-.559 2.903-.364 1.942h.212l.243-.242.985-1.306 1.652-2.064.73-.82.85-.904.547-.431h1.033l.76 1.129-.34 1.166-1.064 1.347-.881 1.142-1.264 1.7-.79 1.36.073.11.188-.02 2.856-.606 1.543-.28 1.841-.315.833.388.091.395-.328.807-1.969.486-2.309.462-3.439.813-.042.03.049.061 1.549.146.662.036h1.622l3.02.225.79.522.474.638-.079.485-1.215.62-1.64-.389-3.829-.91-1.312-.329h-.182v.11l1.093 1.068 2.006 1.81 2.509 2.33.127.578-.322.455-.34-.049-2.205-1.657-.851-.747-1.926-1.62h-.128v.17l.444.649 2.345 3.521.122 1.08-.17.353-.608.213-.668-.122-1.374-1.925-1.415-2.167-1.143-1.943-.14.08-.674 7.254-.316.37-.729.28-.607-.461-.322-.747.322-1.476.389-1.924.315-1.53.286-1.9.17-.632-.012-.042-.14.018-1.434 1.967-2.18 2.945-1.726 1.845-.414.164-.717-.37.067-.662.401-.589 2.388-3.036 1.44-1.882.93-1.086-.006-.158h-.055L4.132 18.56l-1.13.146-.487-.456.061-.746.231-.243 1.908-1.312-.006.006z"
+                    fill="#D97757"
+                    fill-rule="nonzero"
+                  ></path>
+                </svg>
+                <span class="ml-1">Claude Code</span>
               </button>
               <button
                 data-tab-target="#windsurf-tab"
@@ -320,7 +361,7 @@
               <h3 class="text-lg font-semibold text-gray-900 mb-3">Cursor Installation</h3>
               <p class="text-sm text-gray-600 mb-4">
                 Add the following configuration to your Cursor
-                <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">mcp.json</code> file.
+                <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">mcp.json</code> file (uses modern streamable HTTP).
               </p>
               <div class="mb-4">
                 <p class="text-sm text-gray-800 font-medium mb-1">Config file location:</p>
@@ -439,12 +480,86 @@
               </div>
             </div>
 
+            <!-- Claude Code Tab Content -->
+            <div id="claude-code-tab" class="tab-content bg-white p-6 rounded-lg shadow-sm border border-gray-200 hidden">
+              <h3 class="text-lg font-semibold text-gray-900 mb-3">Claude Code CLI Installation</h3>
+              <p class="text-sm text-gray-600 mb-4">
+                Add the MCP server using the
+                <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">claude mcp add</code> command.
+              </p>
+              <div class="mb-4">
+                <p class="text-sm text-gray-800 font-medium mb-1">Modern Streamable HTTP (Recommended):</p>
+                <div class="relative mb-3">
+                  <pre class="bg-gray-900 text-gray-200 p-4 pr-16 rounded-lg text-sm overflow-x-auto shadow-inner"><code>claude mcp add --transport http mcp-memory "<span id="claude-code-config-url" class="font-bold text-orange-400">YOUR_MCP_URL_HERE</span>"</code></pre>
+                  <button
+                    id="copy-claude-code-config-button"
+                    type="button"
+                    class="absolute top-3 right-3 inline-flex items-center rounded bg-gray-700 px-2.5 py-1 text-xs font-medium text-gray-300 shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                    title="Copy Command"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-3.5 w-3.5 mr-1.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
+                    </svg>
+                    Copy
+                  </button>
+                </div>
+                <p class="text-sm text-gray-800 font-medium mb-1">Legacy SSE Transport (Fallback):</p>
+                <div class="relative">
+                  <pre class="bg-gray-900 text-gray-200 p-4 pr-16 rounded-lg text-sm overflow-x-auto shadow-inner"><code>claude mcp add --transport sse mcp-memory-sse "<span id="claude-code-sse-url" class="font-bold text-orange-400">YOUR_SSE_URL_HERE</span>"</code></pre>
+                  <button
+                    id="copy-claude-code-sse-button"
+                    type="button"
+                    class="absolute top-3 right-3 inline-flex items-center rounded bg-gray-700 px-2.5 py-1 text-xs font-medium text-gray-300 shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                    title="Copy SSE Command"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-3.5 w-3.5 mr-1.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
+                    </svg>
+                    Copy
+                  </button>
+                </div>
+              </div>
+              <div class="mb-4">
+                <p class="text-sm text-gray-800 font-medium mb-2">Additional Options:</p>
+                <ul class="list-disc list-inside text-sm text-gray-600 space-y-1 pl-1">
+                  <li>
+                    Scope: Add <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">-s user</code> or <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">-s project</code> to specify configuration scope
+                  </li>
+                  <li>
+                    Environment: Use <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">-e KEY=value</code> to set environment variables if needed
+                  </li>
+                </ul>
+              </div>
+            </div>
+
             <!-- Windsurf Tab Content -->
             <div id="windsurf-tab" class="tab-content bg-white p-6 rounded-lg shadow-sm border border-gray-200 hidden">
               <h3 class="text-lg font-semibold text-gray-900 mb-3">Windsurf (Codeium) Installation</h3>
               <p class="text-sm text-gray-600 mb-4">
                 Add the following configuration to your Windsurf
-                <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">mcp_config.json</code> file.
+                <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">mcp_config.json</code> file (uses modern streamable HTTP).
               </p>
               <div class="mb-4">
                 <p class="text-sm text-gray-800 font-medium mb-1">Config file location:</p>
@@ -493,70 +608,94 @@
               id="direct-api-tab"
               class="tab-content bg-white p-6 rounded-lg shadow-sm border border-gray-200 hidden"
             >
-              <h3 class="text-lg font-semibold text-gray-900 mb-3">Direct API Usage</h3>
-              <p class="text-sm text-gray-600 mb-4">The MCP protocol works over HTTP with Server-Sent Events (SSE):</p>
-              <ol class="list-decimal list-outside text-sm text-gray-600 mb-5 space-y-3 pl-5">
-                <li>
-                  Establish an SSE connection via a
-                  <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">GET</code> request to your
-                  unique endpoint:
-                  <div class="mt-1.5 flex items-center space-x-2 bg-gray-100 p-2 rounded border border-gray-200">
-                    <code id="direct-api-url" class="flex-grow text-sm font-mono text-gray-800 break-all"
-                      >YOUR_SSE_ENDPOINT_HERE</code
+              <h3 class="text-lg font-semibold text-gray-900 mb-3">Direct API Usage (Streamable HTTP)</h3>
+              <p class="text-sm text-gray-600 mb-4">The modern MCP protocol uses streamable HTTP with JSON-RPC 2.0:</p>
+              
+              <div class="mb-4">
+                <p class="text-sm text-gray-800 font-medium mb-2">Endpoint URL:</p>
+                <div class="flex items-center space-x-2 bg-gray-100 p-2 rounded border border-gray-200">
+                  <code id="direct-api-url" class="flex-grow text-sm font-mono text-gray-800 break-all"
+                    >YOUR_MCP_ENDPOINT_HERE</code
+                  >
+                  <button
+                    id="copy-direct-api-url-button"
+                    type="button"
+                    class="flex-shrink-0 inline-flex items-center rounded border border-gray-300 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-1 focus:ring-offset-gray-100"
+                    title="Copy MCP URL"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-3.5 w-3.5 mr-1"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
                     >
-                    <button
-                      id="copy-direct-api-url-button"
-                      type="button"
-                      class="flex-shrink-0 inline-flex items-center rounded border border-gray-300 bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-1 focus:ring-offset-gray-100"
-                      title="Copy SSE URL"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-3.5 w-3.5 mr-1"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                        />
-                      </svg>
-                      Copy
-                    </button>
-                  </div>
-                </li>
-                <li>
-                  The server sends a
-                  <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">message</code> event containing
-                  a JSON object with a
-                  <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">postEndpointUri</code>.
-                </li>
-                <li>
-                  Send your JSON-RPC calls as
-                  <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">POST</code> requests (with
-                  <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded"
-                    >Content-Type: application/json</code
-                  >) to the received
-                  <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">postEndpointUri</code>.
-                </li>
-                <li>
-                  Receive responses as
-                  <code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">message</code> events on the
-                  initial SSE connection.
-                </li>
-              </ol>
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
+                    </svg>
+                    Copy
+                  </button>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <p class="text-sm text-gray-800 font-medium mb-2">Example JSON-RPC 2.0 requests:</p>
+                
+                <div class="mb-3">
+                  <p class="text-xs text-gray-600 mb-1">1. Initialize connection:</p>
+                  <pre class="bg-gray-900 text-gray-200 p-3 rounded text-xs overflow-x-auto"><code>curl -X POST "YOUR_MCP_URL" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{"jsonrpc":"2.0","method":"initialize","params":{},"id":"1"}'</code></pre>
+                </div>
+
+                <div class="mb-3">
+                  <p class="text-xs text-gray-600 mb-1">2. List available tools:</p>
+                  <pre class="bg-gray-900 text-gray-200 p-3 rounded text-xs overflow-x-auto"><code>curl -X POST "YOUR_MCP_URL" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{"jsonrpc":"2.0","method":"tools/list","params":{},"id":"2"}'</code></pre>
+                </div>
+
+                <div class="mb-3">
+                  <p class="text-xs text-gray-600 mb-1">3. Add memory:</p>
+                  <pre class="bg-gray-900 text-gray-200 p-3 rounded text-xs overflow-x-auto"><code>curl -X POST "YOUR_MCP_URL" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "jsonrpc":"2.0",
+    "method":"tools/call",
+    "params":{
+      "type":"tool",
+      "name":"addToMCPMemory",
+      "arguments":{"thingToRemember":"User prefers dark mode"}
+    },
+    "id":"3"
+  }'</code></pre>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <p class="text-sm text-gray-800 font-medium mb-1">Key Headers:</p>
+                <ul class="list-disc list-inside text-sm text-gray-600 space-y-1 pl-1">
+                  <li><code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">Accept: application/json, text/event-stream</code> - Supports both response types</li>
+                  <li><code class="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">Mcp-Session-Id</code> - Session management (auto-generated)</li>
+                </ul>
+              </div>
+
               <p class="text-sm text-gray-600">
                 Refer to the
                 <a
-                  href="https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/docs/specification/2024-11-05/basic/transports.mdx#http-with-sse"
+                  href="https://github.com/modelcontextprotocol/modelcontextprotocol"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="text-orange-600 hover:text-orange-700 underline font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-1 rounded"
                 >
-                  MCP Transport Specification
+                  MCP 2025-03-26 Specification
                 </a>
                 for full details.
               </p>
@@ -598,13 +737,15 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        const sseUrlInput = document.getElementById("sse-url");
+        const sseUrlInput = document.getElementById("mcp-url");
         const copyButton = document.getElementById("copy-button");
         const copyButtonText = copyButton.querySelector("span") || copyButton; // Get inner text node if structure changes
         const copyButtonIcon = copyButton.querySelector("svg");
         const originalButtonHtml = copyButton.innerHTML; // Store original HTML to revert
+        let mcpUrl = "";
         let sseUrl = "";
         let userUuid = localStorage.getItem("mcpUserUuid");
+        let currentProtocol = "http"; // Default to modern HTTP
 
         // Generate UUID if not found in localStorage
         if (!userUuid) {
@@ -622,32 +763,109 @@
           console.log("Using existing UUID:", userUuid);
         }
 
-        if (sseUrlInput) {
+        // Function to update URL based on protocol
+        function updateUrl() {
+          if (sseUrlInput && userUuid) {
+            const currentOrigin = window.location.origin;
+            if (currentProtocol === "http") {
+              mcpUrl = `${currentOrigin}/${userUuid}/mcp`;
+              sseUrlInput.value = mcpUrl;
+            } else {
+              sseUrl = `${currentOrigin}/${userUuid}/sse`;
+              sseUrlInput.value = sseUrl;
+            }
+            updateConfigUrls();
+          }
+        }
+
+        // Function to update all config URL placeholders
+        function updateConfigUrls() {
+          const currentUrl = sseUrlInput.value;
           const currentOrigin = window.location.origin;
-          if (userUuid) {
-            sseUrl = `${currentOrigin}/${userUuid}/sse`;
-            sseUrlInput.value = sseUrl;
+          
+          if (currentProtocol === "http") {
+            // Update all configs with MCP URL
+            mcpUrl = currentUrl;
             // Update Claude config URL placeholder
             const claudeUrlSpan = document.getElementById("claude-config-url");
             if (claudeUrlSpan) {
-              claudeUrlSpan.textContent = sseUrl;
+              claudeUrlSpan.textContent = mcpUrl;
             }
             // Update Cursor config URL placeholder
             const cursorUrlSpan = document.getElementById("cursor-config-url");
             if (cursorUrlSpan) {
-              cursorUrlSpan.textContent = sseUrl;
+              cursorUrlSpan.textContent = mcpUrl;
             }
             // Update Windsurf config URL placeholder
             const windsurfUrlSpan = document.getElementById("windsurf-config-url");
             if (windsurfUrlSpan) {
-              windsurfUrlSpan.textContent = sseUrl;
+              windsurfUrlSpan.textContent = mcpUrl;
+            }
+            // Update Claude Code config URL placeholder
+            const claudeCodeUrlSpan = document.getElementById("claude-code-config-url");
+            if (claudeCodeUrlSpan) {
+              claudeCodeUrlSpan.textContent = mcpUrl;
+            }
+            // Update Claude Code SSE URL placeholder (for legacy fallback)
+            const claudeCodeSseUrlSpan = document.getElementById("claude-code-sse-url");
+            if (claudeCodeSseUrlSpan) {
+              claudeCodeSseUrlSpan.textContent = `${currentOrigin}/${userUuid}/sse`;
             }
             // Update Direct API URL placeholder
             const directApiUrlCode = document.getElementById("direct-api-url");
             if (directApiUrlCode) {
-              directApiUrlCode.textContent = sseUrl;
+              directApiUrlCode.textContent = mcpUrl;
             }
           } else {
+            // Legacy SSE mode
+            sseUrl = currentUrl;
+            
+            // Update all placeholders with SSE URLs
+            const claudeUrlSpan = document.getElementById("claude-config-url");
+            if (claudeUrlSpan) {
+              claudeUrlSpan.textContent = sseUrl;
+            }
+            const cursorUrlSpan = document.getElementById("cursor-config-url");
+            if (cursorUrlSpan) {
+              cursorUrlSpan.textContent = sseUrl;
+            }
+            const windsurfUrlSpan = document.getElementById("windsurf-config-url");
+            if (windsurfUrlSpan) {
+              windsurfUrlSpan.textContent = sseUrl;
+            }
+            const claudeCodeUrlSpan = document.getElementById("claude-code-config-url");
+            if (claudeCodeUrlSpan) {
+              claudeCodeUrlSpan.textContent = sseUrl;
+            }
+            const claudeCodeSseUrlSpan = document.getElementById("claude-code-sse-url");
+            if (claudeCodeSseUrlSpan) {
+              claudeCodeSseUrlSpan.textContent = sseUrl;
+            }
+            const directApiUrlCode = document.getElementById("direct-api-url");
+            if (directApiUrlCode) {
+              directApiUrlCode.textContent = sseUrl;
+            }
+          }
+        }
+
+        if (sseUrlInput) {
+          updateUrl(); // Initialize URLs
+          
+          // Add protocol toggle event listeners
+          const protocolRadios = document.querySelectorAll('input[name="protocol"]');
+          protocolRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+              currentProtocol = e.target.value;
+              updateUrl();
+            });
+          });
+        } else {
+          console.error("Could not find MCP URL input element.");
+        }
+
+        // Handle error case
+        if (!userUuid) {
+          if (sseUrlInput) {
             sseUrlInput.value = "Error generating user identifier.";
             console.error("Could not generate or retrieve UUID.");
             if (copyButton) {
@@ -661,7 +879,7 @@
         if (copyButton && sseUrlInput && userUuid) {
           copyButton.addEventListener("click", () => {
             navigator.clipboard
-              .writeText(sseUrl)
+              .writeText(sseUrlInput.value)
               .then(() => {
                 // Use specific classes for the "Copied" state
                 copyButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg> Copied!`;
@@ -1302,6 +1520,8 @@
         // Setup for each config button
         setupConfigCopyButton("copy-cursor-config-button", "#cursor-tab pre code", "cursor-config-url");
         setupConfigCopyButton("copy-claude-config-button", "#claude-tab pre code", "claude-config-url");
+        setupConfigCopyButton("copy-claude-code-config-button", "#claude-code-tab pre:first-of-type code", "claude-code-config-url");
+        setupConfigCopyButton("copy-claude-code-sse-button", "#claude-code-tab pre:last-of-type code", "claude-code-sse-url");
         setupConfigCopyButton("copy-windsurf-config-button", "#windsurf-tab pre code", "windsurf-config-url");
       });
     </script>

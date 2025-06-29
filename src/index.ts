@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { MyMCP } from "./mcp";
 import { getAllMemoriesFromD1, initializeDatabase, deleteMemoryFromD1, updateMemoryInD1 } from "./utils/db";
 import { deleteVectorById, updateMemoryVector } from "./utils/vectorize";
+import { StreamableHttpHandler } from "./streamable-http";
 
 const app = new Hono<{
   Bindings: Env;
@@ -108,6 +109,19 @@ app.put("/:userId/memories/:memoryId", async (c) => {
   }
 });
 
+// Streamable HTTP MCP endpoint
+app.all("/:userId/mcp", async (c) => {
+  const userId = c.req.param("userId");
+  
+  try {
+    const handler = new StreamableHttpHandler(c.env, userId);
+    return await handler.handleRequest(c.req.raw);
+  } catch (error) {
+    console.error("Error in streamable HTTP handler:", error);
+    return c.json({ error: "Internal server error" }, 500);
+  }
+});
+
 app.mount("/", async (req, env, ctx) => {
   // Hono's app.mount handler receives the raw Request, not the Hono Context.
   const url = new URL(req.url);
@@ -140,3 +154,4 @@ app.mount("/", async (req, env, ctx) => {
 export default app;
 
 export { MyMCP };
+export { SessionManager } from "./session-manager";
