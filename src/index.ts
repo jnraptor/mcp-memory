@@ -158,14 +158,14 @@ app.mount("/", async (req, env, ctx) => {
 	};
 
 	// So the full path handled by MCPMemory will be /:userId/sse
-	const response = await MyMCP.mount(`/${userId}/sse`).fetch(req, env, ctx);
+	const response = await MyMCP.serveSSE(`/${userId}/sse`).fetch(req, env, ctx);
 
 	if (response) {
 		return response;
 	}
 
-	// Fallback if MCPMemory doesn't handle the specific request under its mount point
-	return new Response("Not Found within MCP mount", { status: 404 });
+	// Fallback if MCPMemory doesn't handle the specific request under its serveSSE point
+	return new Response("Not Found within MCP serveSSE", { status: 404 });
 });
 
 export default app;

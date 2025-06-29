@@ -1,6 +1,10 @@
 {
-	"permissions": {
-		"allow": ["WebFetch(domain:github.com)", "WebFetch(domain:modelcontextprotocol.io)"],
-		"deny": []
-	}
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:modelcontextprotocol.io)",
+      "WebFetch(domain:blog.cloudflare.com)"
+    ],
+    "deny": []
+  }
 }

@@ -25,23 +25,18 @@ This is an MCP (Model Context Protocol) Memory Server built on Cloudflare's infr
 
 ### Core Components
 
-**Streamable HTTP MCP Handler (`src/streamable-http.ts`)**
-- Implements MCP 2025-03-26 streamable HTTP protocol with JSON-RPC 2.0
-- Supports both single JSON responses and SSE streaming
-- Simple session management via `Mcp-Session-Id` header generation
-- Exposes tools: `addToMCPMemory`, `searchMCPMemory`, plus `initialize` and `tools/list`
-
-**Legacy MCP Agent (`src/mcp.ts`)**
-- Implements deprecated HTTP+SSE pattern via `workers-mcp` and `@modelcontextprotocol/sdk`
+**MCP Agent (`src/mcp.ts`)**
+- Implements MCP protocol via `workers-mcp` and `@modelcontextprotocol/sdk`
 - Exposes two main tools: `addToMCPMemory` and `searchMCPMemory`
 - Uses Durable Objects (MyMCP class) for stateful operations
 - Receives userId via props from the routing layer
+- Supports both streamable HTTP (new MCP 2025-03-26) and legacy SSE endpoints
 
 **HTTP API (`src/index.ts`)**
 - Hono-based REST API for memory management
 - Routes: GET/DELETE/PUT operations on `/:userId/memories`
-- **Streamable HTTP MCP endpoint**: `/:userId/mcp` (new - supports JSON-RPC 2.0)
-- Legacy MCP agent at `/:userId/sse` for backward compatibility
+- **Streamable HTTP MCP endpoint**: `/:userId/mcp` (new MCP 2025-03-26 protocol)
+- **Legacy SSE MCP endpoint**: `/:userId/sse` for backward compatibility
 - Handles database initialization middleware
 
 **Vector Storage (`src/utils/vectorize.ts`)**
@@ -89,15 +84,14 @@ This is an MCP (Model Context Protocol) Memory Server built on Cloudflare's infr
 
 **Streamable HTTP (Recommended - MCP 2025-03-26)**
 - Endpoint: `/:userId/mcp`
-- Methods: POST (JSON-RPC requests), GET (SSE streams, capabilities)
-- Headers: `Accept` (application/json + text/event-stream), `Mcp-Session-Id`
-- Protocol: JSON-RPC 2.0 with MCP extensions
-- Simple session management via UUID generation
+- Uses MyMCP.serve() method for streamable HTTP protocol
+- Supports JSON-RPC 2.0 with MCP extensions
+- Handles both single responses and streaming via `workers-mcp` framework
 
-**Legacy HTTP+SSE (Deprecated)**
+**Legacy HTTP+SSE**
 - Endpoint: `/:userId/sse` 
-- Uses workers-mcp agent framework
-- Maintains backward compatibility
+- Uses MyMCP.serveSSE() method for traditional SSE-based protocol
+- Maintains backward compatibility with older MCP clients
 
 ### Development Notes
 
@@ -106,6 +100,7 @@ This is an MCP (Model Context Protocol) Memory Server built on Cloudflare's infr
 - Vector operations are eventually consistent
 - Memory IDs are UUIDs shared between D1 and Vectorize
 - Streamable HTTP requires Cloudflare authentication for Workers AI in local dev
+- No test suite currently implemented - manual testing via MCP clients recommended
 
 ## Planning and Documentation
 
