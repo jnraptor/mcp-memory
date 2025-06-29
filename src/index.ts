@@ -133,7 +133,7 @@ app.put("/:userId/memories/:memoryId", async (c) => {
 });
 
 // Handle trailing slash case for MCP endpoint
-app.all("/:userId/mcp/", async (c) => {
+app.post("/:userId/mcp/", async (c) => {
 	const userId = c.req.param("userId");
 	const ctx = { props: { userId } };
 	return await MyMCP.serve(`/${userId}/mcp`).fetch(c.req.raw, c.env, ctx);
