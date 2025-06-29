@@ -133,7 +133,7 @@ app.put("/:userId/memories/:memoryId", async (c) => {
 });
 
 // Streamable HTTP MCP endpoint
-app.all("/:userId/mcp", async (c) => {
+app.all("/:userId/mcp/?", async (c) => {
 	const userId = c.req.param("userId");
 	const ctx = { props: { userId } };
 	return await MyMCP.serve(`/${userId}/mcp`).fetch(c.req.raw, c.env, ctx);
