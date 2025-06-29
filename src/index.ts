@@ -31,6 +31,14 @@ app.use("*", async (c, next) => {
 	await next();
 });
 
+// OAuth discovery endpoint to prevent 404 errors during MCP dynamic client registration
+app.get("/.well-known/oauth-authorization-server", async (c) => {
+	return c.json({ 
+		error: "oauth_discovery_not_supported", 
+		error_description: "OAuth discovery not implemented. Use direct MCP endpoints." 
+	}, 404);
+});
+
 // index.html
 app.get("/", async (c) => await c.env.ASSETS.fetch(c.req.raw));
 
